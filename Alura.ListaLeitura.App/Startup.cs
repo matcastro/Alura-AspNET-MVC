@@ -1,16 +1,51 @@
-﻿using Alura.ListaLeitura.App.Repositorio;
+﻿using Alura.ListaLeitura.App.Negocio;
+using Alura.ListaLeitura.App.Repositorio;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Alura.ListaLeitura.App
 {
     public class Startup
     {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddRouting();
+        }
         public void Configure(IApplicationBuilder app)
         {
-            app.Run(Roteamento);
+            var rotas = new RouteBuilder(app);
+            rotas.MapRoute("/Livros/ParaLer", LivrosParaLer);
+            rotas.MapRoute("/Livros/Lidos", LivrosLidos);
+            rotas.MapRoute("/Livros/Lendo", LivrosLendo);
+            rotas.MapRoute("/Cadastro/NovoLivro/{nome}/{autor}", CadastroNovoLivro);
+            rotas.MapRoute("/Livro/Detalhe/{id:int}", LivroDetalhes);
+            app.UseRouter(rotas.Build());
+        }
+
+        private Task LivroDetalhes(HttpContext context)
+        {
+            var repo = new LivroRepositorioCSV();
+            var id = Convert.ToInt32(context.GetRouteValue("id"));
+            var livro = repo.Todos.First(l => l.Id == id);
+            return context.Response.WriteAsync(livro.Detalhes());
+        }
+
+        private Task CadastroNovoLivro(HttpContext context)
+        {
+            var livro = new Livro()
+            {
+                Titulo = Convert.ToString(context.GetRouteValue("nome")),
+                Autor = Convert.ToString(context.GetRouteValue("autor"))
+            };
+            var repo = new LivroRepositorioCSV();
+            repo.Incluir(livro);
+            return context.Response.WriteAsync("Livro cadastrado com sucesso");
         }
 
         public Task Roteamento(HttpContext contexto)
