@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,7 +26,36 @@ namespace Alura.ListaLeitura.App
             rotas.MapRoute("/Livros/Lendo", LivrosLendo);
             rotas.MapRoute("/Cadastro/NovoLivro/{nome}/{autor}", CadastroNovoLivro);
             rotas.MapRoute("/Livro/Detalhe/{id:int}", LivroDetalhes);
+            rotas.MapRoute("/Cadastro/NovoLivro", ExibeFormulario);
+            rotas.MapRoute("/Cadastro/Incluir", ProcessaFormulario);
             app.UseRouter(rotas.Build());
+        }
+
+        private Task ProcessaFormulario(HttpContext context)
+        {
+            var livro = new Livro()
+            {
+                Titulo = context.Request.Form["titulo"].First(),
+                Autor = context.Request.Form["autor"].First()
+            };
+            var repo = new LivroRepositorioCSV();
+            repo.Incluir(livro);
+            return context.Response.WriteAsync("Livro cadastrado com sucesso");
+        }
+
+        private Task ExibeFormulario(HttpContext context)
+        {
+            var html = CarregaHtml("formulario");
+            return context.Response.WriteAsync(html);
+        }
+
+        private string CarregaHtml(string caminho)
+        {
+            var caminhoCompleto = $"HTML/{caminho}.html";
+            using (var arquivo = File.OpenText(caminhoCompleto))
+            {
+                return arquivo.ReadToEnd();
+            }
         }
 
         private Task LivroDetalhes(HttpContext context)
@@ -67,17 +97,32 @@ namespace Alura.ListaLeitura.App
         public Task LivrosParaLer(HttpContext contexto)
         {
             var repositorio = new LivroRepositorioCSV();
-            return contexto.Response.WriteAsync(repositorio.ParaLer.ToString());
+            string html = PreencheLista("para-ler",repositorio.ParaLer.Livros);
+            return contexto.Response.WriteAsync(html);
         }
+
+
         public Task LivrosLidos(HttpContext contexto)
         {
             var repositorio = new LivroRepositorioCSV();
-            return contexto.Response.WriteAsync(repositorio.Lidos.ToString());
+            string html = PreencheLista("lidos", repositorio.Lidos.Livros);
+            return contexto.Response.WriteAsync(html);
         }
         public Task LivrosLendo(HttpContext contexto)
         {
             var repositorio = new LivroRepositorioCSV();
-            return contexto.Response.WriteAsync(repositorio.Lendo.ToString());
+            string html = PreencheLista("lendo", repositorio.Lendo.Livros);
+            return contexto.Response.WriteAsync(html);
+        }
+        private string PreencheLista(string caminho,IEnumerable<Livro> livros)
+        {
+            var html = CarregaHtml(caminho);
+            foreach (var livro in livros)
+            {
+                html = html.Replace("#NOVO-ITEM#", $"<li>{livro.Titulo} - {livro.Autor}</li>#NOVO-ITEM#");
+            }
+            html = html.Replace("#NOVO-ITEM#", "");
+            return html;
         }
     }
 }

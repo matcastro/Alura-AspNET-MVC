@@ -10,3 +10,7 @@ C:\git\Alura-AspNET-MVC\Alura.ListaLeitura.App\obj\Debug\netcoreapp2.0\Alura.Lis
 C:\git\Alura-AspNET-MVC\Alura.ListaLeitura.App\obj\Debug\netcoreapp2.0\Alura.ListaLeitura.App.dll
 C:\git\Alura-AspNET-MVC\Alura.ListaLeitura.App\obj\Debug\netcoreapp2.0\Alura.ListaLeitura.App.pdb
 C:\git\Alura-AspNET-MVC\Alura.ListaLeitura.App\bin\Debug\netcoreapp2.0\Repositorio\livros.csv
+C:\git\Alura-AspNET-MVC\Alura.ListaLeitura.App\bin\Debug\netcoreapp2.0\HTML\formulario.html
+C:\git\Alura-AspNET-MVC\Alura.ListaLeitura.App\bin\Debug\netcoreapp2.0\HTML\para-ler.html
+C:\git\Alura-AspNET-MVC\Alura.ListaLeitura.App\bin\Debug\netcoreapp2.0\HTML\lendo.html
+C:\git\Alura-AspNET-MVC\Alura.ListaLeitura.App\bin\Debug\netcoreapp2.0\HTML\lidos.html
