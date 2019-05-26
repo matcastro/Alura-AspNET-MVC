@@ -1,15 +1,10 @@
-﻿using Alura.ListaLeitura.App.HTML;
-using Alura.ListaLeitura.App.Negocio;
+﻿using Alura.ListaLeitura.App.Negocio;
 using Alura.ListaLeitura.App.Repositorio;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Alura.ListaLeitura.App.Logica
 {
-    public class CadastroController
+    public class CadastroController : Controller
     {
         public string Incluir(Livro livro)
         {
@@ -18,10 +13,9 @@ namespace Alura.ListaLeitura.App.Logica
             return "Livro cadastrado com sucesso";
         }
 
-        public string ExibeFormulario()
+        public IActionResult ExibeFormulario()
         {
-            var html = HtmlUtils.CarregaHtml("formulario");
-            return html;
+            return View("formulario");
         }
     }
 }
